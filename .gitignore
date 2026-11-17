@@ -54,3 +54,5 @@ supabase/.branches
 .agents/
 skills-lock.json
 .playwright-mcp/
+
+/docs

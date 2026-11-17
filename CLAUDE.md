@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-Phase 1 scaffold is in place: Next.js (App Router, TypeScript, Tailwind) wired to Supabase, with the initial schema/RLS, single-owner auth gate, and a baseline gallery page. Still deferred: real image generation, R2/CDN image hosting, pgvector similarity, the background jobs system, and the full prompt customiser UI (see the data model and constraints below).
+Phase 1 scaffold is in place: Next.js (App Router, TypeScript, Tailwind) wired to Supabase, with the initial schema/RLS, single-owner auth gate, and a baseline gallery page. Real image generation is wired up (OpenAI `gpt-image-1` behind the adapter interface, images stored in a public Supabase Storage bucket, a minimal customiser form at `/customiser` triggers it) — capped at 4 variations per request, no monthly spend cap yet. Still deferred: a second provider, R2/CDN image hosting (Supabase Storage is the interim host), pgvector similarity, the background jobs system (OpenAI's endpoint is synchronous so none was needed yet), monthly spend cap enforcement, and the Remix action (see the data model and constraints below).
 
 Next.js 16 note: `cacheComponents` is intentionally **off** in `next.config.ts` (classic rendering model) — enabling it requires wrapping every session/DB read in `<Suspense>`, which isn't worth it for a single-owner app. `middleware.ts` is also renamed to `proxy.ts` in this Next version.
 
