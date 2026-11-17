@@ -31,22 +31,22 @@ select
 from (values
   ('Midnight brick alley', 'lego', 'Urban street scene', 'eye-level', 'photoreal', 'near-future', '["night","rain"]',
    'A minifig scale LEGO diorama of an urban street scene...', 'blurry, watermark', 'flux-pro', 101,
-   'https://picsum.photos/seed/lego1/800/600', true),
+   'https://placehold.co/800x600/2b6cb0/ffffff?text=Midnight+Brick+Alley', true),
   ('Wasteland convoy', 'lego', 'Post-apocalyptic', 'low-angle', 'stylized', 'post-collapse', '["workshop"]',
    'A large scale LEGO diorama of a post-apocalyptic convoy...', 'blurry, watermark', 'flux-pro', 102,
-   'https://picsum.photos/seed/lego2/800/600', false),
+   'https://placehold.co/800x600/2b6cb0/ffffff?text=Wasteland+Convoy', false),
   ('Desert mech outpost', 'gundam', 'Desert outpost', 'eye-level', 'photoreal', 'far-future', '["workshop"]',
    'A HG 1/144 Gundam diorama of a desert outpost...', 'blurry, watermark', 'flux-pro', 201,
-   'https://picsum.photos/seed/gundam1/800/600', true),
+   'https://placehold.co/800x600/742a2a/ffffff?text=Desert+Mech+Outpost', true),
   ('Neon city skirmish', 'gundam', 'Neon cyberpunk', 'low-angle', 'stylized', 'near-future', '["night"]',
    'A RG 1/144 Gundam diorama of a neon cyberpunk skirmish...', 'blurry, watermark', 'flux-pro', 202,
-   'https://picsum.photos/seed/gundam2/800/600', false),
+   'https://placehold.co/800x600/742a2a/ffffff?text=Neon+City+Skirmish', false),
   ('Rally car in the snow', 'cars', 'Forest hideout', 'eye-level', 'photoreal', 'modern', '["snow"]',
    'A 1:64 scale diecast diorama of a rally car in a forest hideout...', 'blurry, watermark', 'flux-pro', 301,
-   'https://picsum.photos/seed/cars1/800/600', true),
+   'https://placehold.co/800x600/1a202c/ffffff?text=Rally+Car+in+Snow', true),
   ('Garage night build', 'cars', 'Urban street scene', 'low-angle', 'photoreal', 'modern', '["night","workshop"]',
    'A 1:43 scale diecast diorama of a garage night build...', 'blurry, watermark', 'flux-pro', 302,
-   'https://picsum.photos/seed/cars2/800/600', false)
+   'https://placehold.co/800x600/1a202c/ffffff?text=Garage+Night+Build', false)
 ) as v(title, category, theme, pov, realism, era, tags, prompt, negative_prompt, model, seed, image_url, is_favourite);
 
 insert into boards (name, description) values ('Favourites', 'Best of each category');

@@ -1,24 +1,31 @@
 # Diorama Designs
 
-A personal, single-owner gallery for browsing AI-generated 3D diorama scenes across LEGO builds, Gundam (Gunpla) kits, and car miniatures. No accounts, sharing, or community uploads — see `CLAUDE.md` and `docs/ADR-001 Diorama Designs — Architecture.pdf` for the full architecture and roadmap.
+A personal, single-owner inspiration board for browsing AI-generated 3D diorama scenes across three hobbies: LEGO builds, Gundam (Gunpla) kits, and car miniatures. No user accounts, sharing, or community uploads — one owner browses/filters a gallery and (eventually) uses a prompt customiser to generate new diorama concepts.
+
+See `CLAUDE.md` for full architecture notes and constraints.
 
 ## Stack
 
-Next.js (App Router, TypeScript), Tailwind, Supabase (Postgres + Auth), deployed as a single-owner app gated by one allowed email.
+- Next.js 16 (App Router, TypeScript, Tailwind CSS v4)
+- Supabase (Postgres + Auth), with Row-Level Security gating every table to a single owner email
+- Owner-only magic-link auth — no roles, no public write access
 
-## Setup
+## Getting started
 
-1. `npm install`
-2. Copy `.env.local.example` to `.env.local` and fill in your Supabase project URL/anon key and `OWNER_EMAIL`.
-3. Local development needs Docker running, then:
+```bash
+npm install
+supabase start      # local Postgres + Auth + Studio via Docker
+supabase db reset   # apply migrations + supabase/seed.sql
+npm run dev
+```
 
-   ```sh
-   supabase start
-   supabase db reset   # applies migrations + supabase/seed.sql
-   npm run dev
-   ```
+The app runs at `http://localhost:3000`. Local Supabase Studio is at `http://127.0.0.1:54323`, and local email (magic links) at `http://127.0.0.1:54324`.
 
-4. To work against your real Supabase project instead: `supabase login`, `supabase link --project-ref <ref>`, `supabase db push`, then point `.env.local` at that project's URL/anon key. In the Supabase dashboard, add `<your-site-url>/auth/callback` under Authentication → URL Configuration, or magic-link sign-in will silently fail.
+Copy `.env.local.example` to `.env.local` and fill in:
+
+- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` — from `supabase start` output (local) or your Supabase project settings (remote)
+- `OWNER_EMAIL` — the single email allowed to sign in
+- `NEXT_PUBLIC_GALLERY_PUBLIC` — `true`/`false`; gallery reads are still gated by RLS regardless of this flag (see below)
 
 ## Commands
 
@@ -26,7 +33,15 @@ Next.js (App Router, TypeScript), Tailwind, Supabase (Postgres + Auth), deployed
 - `supabase start` / `supabase stop` — local Postgres+Auth+Studio via Docker
 - `supabase db reset` — reapplies all migrations + `supabase/seed.sql` locally
 - `supabase migration new <name>` — new timestamped migration
-- `supabase db push` — apply local migrations to the linked remote
+- `supabase db push --remote` — apply local migrations to the linked remote project (after `supabase login` + `supabase link`)
 - `supabase gen types typescript --local > src/types/database.ts` — regenerate typed bindings after any schema change
 
-Next.js 16 note: Cache Components (`cacheComponents`) is intentionally off in `next.config.ts` — see the comment there. `middleware.ts` is `src/proxy.ts` in this Next version.
+## Current status
+
+Phase 1 scaffold: gallery page with category/scale/theme filters, seeded sample dioramas, and owner-only magic-link login. The database is private via Row-Level Security — every table requires the authenticated owner session regardless of `NEXT_PUBLIC_GALLERY_PUBLIC`, so a public read-only gallery needs a dedicated RLS policy change (not yet built).
+
+Deferred: real image generation, R2/CDN image hosting, pgvector similarity, background jobs, and the full prompt customiser UI.
+
+## Deployment
+
+Intended target is Vercel (connected to this GitHub repo), with production environment variables pointing at the hosted Supabase project. Add the deployed `/auth/callback` URL to the Supabase project's Authentication → URL Configuration once a deployment URL exists.
