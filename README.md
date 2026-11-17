@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Diorama Designs
 
-## Getting Started
+A personal, single-owner gallery for browsing AI-generated 3D diorama scenes across LEGO builds, Gundam (Gunpla) kits, and car miniatures. No accounts, sharing, or community uploads — see `CLAUDE.md` and `docs/ADR-001 Diorama Designs — Architecture.pdf` for the full architecture and roadmap.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Next.js (App Router, TypeScript), Tailwind, Supabase (Postgres + Auth), deployed as a single-owner app gated by one allowed email.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. `npm install`
+2. Copy `.env.local.example` to `.env.local` and fill in your Supabase project URL/anon key and `OWNER_EMAIL`.
+3. Local development needs Docker running, then:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```sh
+   supabase start
+   supabase db reset   # applies migrations + supabase/seed.sql
+   npm run dev
+   ```
 
-## Learn More
+4. To work against your real Supabase project instead: `supabase login`, `supabase link --project-ref <ref>`, `supabase db push`, then point `.env.local` at that project's URL/anon key. In the Supabase dashboard, add `<your-site-url>/auth/callback` under Authentication → URL Configuration, or magic-link sign-in will silently fail.
 
-To learn more about Next.js, take a look at the following resources:
+## Commands
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `npm run dev` / `npm run build` / `npm start` / `npm run lint`
+- `supabase start` / `supabase stop` — local Postgres+Auth+Studio via Docker
+- `supabase db reset` — reapplies all migrations + `supabase/seed.sql` locally
+- `supabase migration new <name>` — new timestamped migration
+- `supabase db push` — apply local migrations to the linked remote
+- `supabase gen types typescript --local > src/types/database.ts` — regenerate typed bindings after any schema change
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16 note: Cache Components (`cacheComponents`) is intentionally off in `next.config.ts` — see the comment there. `middleware.ts` is `src/proxy.ts` in this Next version.
